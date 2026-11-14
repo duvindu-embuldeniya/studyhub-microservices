@@ -8,17 +8,6 @@
   "item": [
     {
       "name": "Register",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.environment.set(\"token\", pm.response.json().token);"
-            ]
-          }
-        }
-      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -47,17 +36,6 @@
     },
     {
       "name": "Login",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.environment.set(\"token\", pm.response.json().token);"
-            ]
-          }
-        }
-      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -204,7 +182,18 @@
           ]
         }
       },
-      "response": []
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"roomId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "Get room",
@@ -212,14 +201,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/api/rooms/2",
+          "raw": "{{baseUrl}}/api/rooms/{{roomId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
             "rooms",
-            "2"
+            "{{roomId}}"
           ]
         }
       },
@@ -260,7 +249,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"room_id\": 2,\r\n  \"body\": \"Hello! This is my first StudyHub message.\"\r\n}",
+          "raw": "{\r\n  \"room_id\": {{roomId}},\r\n  \"body\": \"Hello! This is my first StudyHub message.\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -286,7 +275,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/api/messages?room_id=2",
+          "raw": "{{baseUrl}}/api/messages?room_id={{roomId}}",
           "host": [
             "{{baseUrl}}"
           ],
@@ -297,7 +286,7 @@
           "query": [
             {
               "key": "room_id",
-              "value": "2"
+              "value": "{{roomId}}"
             }
           ]
         }
@@ -368,6 +357,86 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Unread count",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/notifications/count",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "notifications",
+            "count"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Mark all read",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/notifications/read-all",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "notifications",
+            "read-all"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
     }
   ]
 }
