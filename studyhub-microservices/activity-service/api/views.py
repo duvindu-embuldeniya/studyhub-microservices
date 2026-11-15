@@ -42,7 +42,15 @@ def record_event(request):
 @require_http_methods(["GET"])
 def feed(request):
     limit = int(request.GET.get("limit", 20))
-    events = Event.objects.order_by("-id")[:limit]
+    event_type = request.GET.get("type")
+
+    events = Event.objects.all()
+
+    if event_type:
+        events = events.filter(type=event_type)
+
+    events = events.order_by("-id")[:limit]
+
     return JsonResponse([e.public() for e in events], safe=False)
 
 
