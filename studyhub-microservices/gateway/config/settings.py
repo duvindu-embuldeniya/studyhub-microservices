@@ -8,18 +8,23 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = ["django.contrib.staticfiles", "api"]
-MIDDLEWARE = ["django.middleware.common.CommonMiddleware"]
+MIDDLEWARE = [
+    "django.middleware.common.CommonMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serves /static/ (CSS, images) under gunicorn
+]
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {}
 APPEND_SLASH = False
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# Static files live in api/static/ (found automatically). collectstatic copies them to STATIC_ROOT
+# at image build time and WhiteNoise serves them, so we keep gunicorn and DEBUG=False.
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 SERVICES = {
     "user-service": os.getenv("USER_URL", "http://127.0.0.1:8001"),
