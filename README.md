@@ -57,9 +57,10 @@ Open http://localhost:8000 for the web UI (register, create a room, post, see no
 cd studyhub-microservices/user-service && python manage.py test
 cd ../room-service && python manage.py test
 cd ../notification-service && python manage.py test
+cd ../message-service && python manage.py test
 cd ../gateway && python manage.py test
 
-# end-to-end test (26 checks) against the running system
+# end-to-end test (32 checks) against the running system
 pip install httpx
 python scripts/smoke_test.py
 ```

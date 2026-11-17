@@ -39,15 +39,29 @@ def health(request):
 
 
 @csrf_exempt
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET", "POST", "DELETE"])
 def messages_collection(request):
+    if request.method == "DELETE":
+        # Internal: room-service calls this after a room is deleted, so no orphan messages are left.
+        if request.headers.get("X-Internal-Key") != settings.INTERNAL_KEY:
+            return JsonResponse({"detail": "Internal endpoint"}, status=403)
+        room_id = request.GET.get("room_id")
+        if room_id is None or not room_id.isdigit():
+            return JsonResponse({"detail": "room_id is required"}, status=422)
+        deleted, _ = Message.objects.filter(room_id=int(room_id)).delete()
+        return JsonResponse({"deleted": deleted})
+
     if request.method == "GET":
         room_id = request.GET.get("room_id")
-        limit = int(request.GET.get("limit", 100))
+        try:
+            limit = max(1, min(int(request.GET.get("limit", 100)), 500))
+            offset = max(0, int(request.GET.get("offset", 0)))
+        except ValueError:
+            return JsonResponse({"detail": "limit and offset must be integers"}, status=422)
         messages = Message.objects.all()
         if room_id is not None:
             messages = messages.filter(room_id=room_id)
-        messages = messages.order_by("-id")[:limit]
+        messages = messages.order_by("-id")[offset:offset + limit]
         return JsonResponse([m.public() for m in messages], safe=False)
 
     payload, error = _current_user_or_401(request)
@@ -92,7 +106,7 @@ def messages_collection(request):
 
 
 @csrf_exempt
-@require_http_methods(["DELETE"])
+@require_http_methods(["PUT", "DELETE"])
 def message_detail(request, message_id):
     payload, error = _current_user_or_401(request)
     if error:
@@ -101,6 +115,16 @@ def message_detail(request, message_id):
     message = Message.objects.filter(id=message_id).first()
     if not message:
         return JsonResponse({"detail": "Message not found"}, status=404)
+    if request.method == "PUT":
+        if message.user_id != payload["user_id"]:
+            return JsonResponse({"detail": "You can only edit your own messages"}, status=403)
+        body = _body(request).get("body") or ""
+        if not (1 <= len(body) <= 2000):
+            return JsonResponse({"detail": "body (1-2000 chars) is required"}, status=422)
+        message.body = body
+        message.save()
+        return JsonResponse(message.public())
+
     if message.user_id != payload["user_id"]:
         return JsonResponse({"detail": "You can only delete your own messages"}, status=403)
 
