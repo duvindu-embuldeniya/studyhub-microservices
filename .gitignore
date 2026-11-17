@@ -1,3 +1,4 @@
 studyhub-cloud-version/venv/
 studyhub-cloud-version/.env
 
+staticfiles/
