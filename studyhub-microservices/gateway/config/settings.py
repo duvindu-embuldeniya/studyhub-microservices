@@ -8,15 +8,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS = ["api"]
+INSTALLED_APPS = ["django.contrib.staticfiles", "api"]
 MIDDLEWARE = ["django.middleware.common.CommonMiddleware"]
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {}
 APPEND_SLASH = False
+
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 SERVICES = {
     "user-service": os.getenv("USER_URL", "http://127.0.0.1:8001"),

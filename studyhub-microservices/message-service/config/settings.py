@@ -13,14 +13,18 @@ ROOM_URL = os.getenv("ROOM_URL", "http://127.0.0.1:8002")
 ACTIVITY_URL = os.getenv("ACTIVITY_URL", "http://127.0.0.1:8004")
 NOTIFICATION_URL = os.getenv("NOTIFICATION_URL", "http://127.0.0.1:8005")
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.staticfiles",
     "api",
 ]
+
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
