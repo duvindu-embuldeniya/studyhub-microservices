@@ -1,5 +1,7 @@
 # StudyHub - Microservices Chat Platform
 
+![CI](https://github.com/tharinduk001/studyhub-microservices/actions/workflows/ci.yml/badge.svg)
+
 ITS4243 group project. A topic-based chat platform (rooms, messages, notifications, activity feed) built as **6 independent Django microservices** behind an API gateway, each with its own database, plus Redis for shared login sessions.
 
 ## Architecture

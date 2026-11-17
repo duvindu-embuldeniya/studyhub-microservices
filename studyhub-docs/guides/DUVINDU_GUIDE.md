@@ -62,6 +62,8 @@ Rules: one branch per task, small commits, no big restructuring PRs, never push 
 
 ## 4. Your tasks (in this order)
 
+> **Update 17 Nov:** Tasks A, B and C below were completed by Tharindu (PRs #25 and #26) to protect the deadline. Your remaining tasks are **D (Kubernetes, in a separate `cloud` branch)** and **E (demo)**. Thanks for the static-files PR (#24)!
+
 ### Task A - Message-service features (issue #3, branch `feature/message-service`) - due 16 Nov
 File: `studyhub-microservices/message-service/api/views.py`. Auth = `current_user(request)` from `api/sessionauth.py` (returns `{"user_id", "username"}` or `None`).
 1. **Edit a message**: add a `PUT` branch to `message_detail` (now only `DELETE`). Body `{"body": "new text"}`; 404 if missing, 403 if `message.user_id` is not the caller, else update, `save()` and return `message.public()`.

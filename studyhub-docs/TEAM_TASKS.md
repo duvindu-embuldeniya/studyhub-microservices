@@ -20,10 +20,11 @@ api-gateway (8000, web UI) | user (8001) | room (8002) | message (8003) | activi
 - [ ] #11 Demo and viva (architecture, gateway, sessions via Redis)
 
 ## Duvindu
-- [ ] #3 Message-service: edit message, pagination, internal room cleanup (`feature/message-service`) - **due 16 Nov**
-- [ ] Unit tests for message-service and activity-service (`feature/tests-message-activity`) - 17 Nov
-- [ ] #13 CI: GitHub Actions running `docker compose up` + `scripts/smoke_test.py` (`feature/ci`) - 17 Nov
-- [ ] #5 Kubernetes manifests, stretch (`feature/kubernetes`) - 18 Nov
+- [x] #3 Message-service: edit message, pagination, internal room cleanup - done by Tharindu (PR #25) to protect the deadline
+- [x] Unit tests for message-service and activity-service - done by Tharindu (PR #25, #26)
+- [x] #13 CI: GitHub Actions (unit tests + docker compose smoke test) - done by Tharindu (PR #26)
+- [ ] #5 Kubernetes manifests, stretch, in a separate `cloud` branch (not merged into develop) - 18 Nov
+- [x] Static-file serving fix for the gateway (PR #24)
 - [ ] #11 Demo and viva (message flow, resilience demo, CI, Kubernetes)
 
 ## Amaya
