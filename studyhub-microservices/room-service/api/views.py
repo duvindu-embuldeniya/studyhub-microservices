@@ -49,6 +49,19 @@ def publish_event(type_: str, user: dict, detail: str):
         pass
 
 
+def delete_room_messages(room_id: int):
+    """Best-effort: ask message-service to delete the messages of a deleted room (no orphans)."""
+    try:
+        requests.delete(
+            f"{settings.MESSAGE_URL}/messages",
+            params={"room_id": room_id},
+            headers={"X-Internal-Key": settings.INTERNAL_KEY},
+            timeout=2,
+        )
+    except requests.RequestException:
+        pass
+
+
 @require_http_methods(["GET"])
 def health(request):
     return JsonResponse({"service": "room-service", "status": "ok"})
@@ -107,6 +120,7 @@ def room_detail(request, room_id):
         return JsonResponse(room.public())
 
     room.delete()
+    delete_room_messages(room_id)
     return JsonResponse(None, status=204, safe=False)
 
 

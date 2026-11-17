@@ -55,3 +55,21 @@ class RoomTests(TestCase):
         other = logged_in(2, "bob")
         self.assertEqual(other.put(f"/rooms/{rid}", data={"name": "Hack", "topic": "t"}, content_type="application/json").status_code, 403)
         self.assertEqual(other.delete(f"/rooms/{rid}").status_code, 403)
+
+
+class RoomDeleteCleanupTests(TestCase):
+    @mock.patch("api.views.publish_event", lambda *a, **k: None)
+    @mock.patch("api.views.requests.delete")
+    def test_deleting_room_asks_message_service_to_clean_up(self, delete):
+        host = logged_in()
+        rid = make_room(host).json()["id"]
+        host.delete(f"/rooms/{rid}")
+        self.assertEqual(delete.call_args.kwargs["params"], {"room_id": rid})
+        self.assertIn("X-Internal-Key", delete.call_args.kwargs["headers"])
+
+    @mock.patch("api.views.publish_event", lambda *a, **k: None)
+    @mock.patch("api.views.requests.delete", side_effect=__import__("requests").ConnectionError)
+    def test_room_delete_still_works_if_message_service_is_down(self, _):
+        host = logged_in()
+        rid = make_room(host).json()["id"]
+        self.assertEqual(host.delete(f"/rooms/{rid}").status_code, 204)
